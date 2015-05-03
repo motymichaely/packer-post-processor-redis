@@ -157,7 +157,7 @@ func TestPostProcessor_PostProcess_googlecompute(t *testing.T) {
     IdValue:        "image-name-12345",
   }
 
-  redigomock.Command("SET", "my_prefix/", "image-name-12345").Expect("ok")
+  redigomock.Command("SET", "my_prefix", "image-name-12345").Expect("ok")
 
   result, keep, err := p.PostProcess(testUi(), artifact)
   if result != artifact {
@@ -174,7 +174,7 @@ func TestPostProcessor_PostProcess_googlecompute(t *testing.T) {
 func validDefaults() map[string]interface{} {
   return map[string]interface{}{
     "redis_url":  ":6379",
-    "key_prefix": "my_prefix/",
+    "key_prefix": "my_prefix",
   }
 }
 
