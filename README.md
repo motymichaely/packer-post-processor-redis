@@ -3,7 +3,7 @@
 
 Packer Redis post processor is a [Packer post processor](https://packer.io/docs/extend/post-processor.html) plugin to store builder artifacts metadata into a Redis server for later retrieval.
 
-This project was inspured by [Packer Consul post processor][packer-post-processor-consul].
+This project was inspired by [Packer Consul post processor][packer-post-processor-consul].
 
 ## Usage
 
@@ -16,6 +16,13 @@ Run:
 ```shell
 $ go get github.com/motymichaely/packer-post-processor-redis
 $ go install github.com/motymichaely/packer-post-processor-redis
+```
+
+Copy the binary file into your packer plugins folder:
+
+```shell
+$ mkdir $HOME/.packer.d/plugins
+$ cp $GOPATH/bin/packer-post-processor-redis $HOME/.packer.d/plugins
 ```
 
 Add the post-processor to Packer config file (`~/.packerconfig`):
