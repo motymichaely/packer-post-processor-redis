@@ -150,7 +150,7 @@ func (p *PostProcessor) PostProcess(ui packer.Ui, artifact packer.Artifact) (pac
       region :=   parts[0]
       image_id = parts[1]
 
-      redis_key = fmt.Sprintf("%s%s", p.config.KeyPrefix, region)
+      redis_key = fmt.Sprintf("%s/%s", p.config.KeyPrefix, region)
     } else {
       image_id = parts[0]
 

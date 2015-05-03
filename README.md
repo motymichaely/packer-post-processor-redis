@@ -41,7 +41,7 @@ The configuration for this post-processor is extremely simple.
 
 `redis_url (string)` - Your access token for the Atlas API. This can be generated on your tokens page. Alternatively you can export your Redis URL as an environmental variable and remove it from the configuration. Note 
 
-`key_prefix (string)` - The prefix of the key to be set, i.e `my_service/images/`. for builders that support multiple regions, the prefix will be appended with the region to the key prefix, i.e `my_service/images/region`.
+`key_prefix (string)` - The prefix of the key to be set, i.e `my_service/images`. for builders that support multiple regions, the prefix will be appended with the region to the key prefix, i.e `my_service/images/<region>`.
 
 Add the post-processor to your packer template:
 
@@ -57,7 +57,7 @@ Add the post-processor to your packer template:
       {
         "type": "redis",
         "redis_url": "redis://localhost:6379/0",
-        "key_prefix": "my_service/images/",
+        "key_prefix": "my_service/images",
         "only": ["amazonebs"]
       }
     ]
