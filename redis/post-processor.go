@@ -102,7 +102,7 @@ func (p *PostProcessor) PostProcess(ui packer.Ui, artifact packer.Artifact) (pac
     redisURL, err := url.Parse(p.config.RedisUrl)
 
     if err != nil {
-      return nil, false, fmt.Errorf(
+      return artifact, false, fmt.Errorf(
         "Error parsing RedisUrl: %s", err)
     }
 
@@ -118,7 +118,7 @@ func (p *PostProcessor) PostProcess(ui packer.Ui, artifact packer.Artifact) (pac
       "tcp",
       redisURL.Host)
     if err != nil {
-      return nil, false, fmt.Errorf(
+      return artifact, false, fmt.Errorf(
         "Error connecting to Redis: %s", err)
     }
 
@@ -126,7 +126,7 @@ func (p *PostProcessor) PostProcess(ui packer.Ui, artifact packer.Artifact) (pac
       _, err = p.client.Do("AUTH", auth)
 
       if err != nil {
-        return nil, false, fmt.Errorf(
+        return artifact, false, fmt.Errorf(
           "Error connecting to Redis: %s", err)
       }
     }
@@ -160,8 +160,8 @@ func (p *PostProcessor) PostProcess(ui packer.Ui, artifact packer.Artifact) (pac
     ui.Message(fmt.Sprintf("Setting key %s with value %s", redis_key, image_id))
 
     if _, err := p.client.Do("SET", redis_key, image_id); err != nil {
-      return nil, false, err
+      return artifact, false, err
     }
   }
-  return nil, false, nil
+  return artifact, false, nil
 }

@@ -49,8 +49,8 @@ func TestPostProcessor_PostProcess(t *testing.T) {
   redigomock.Command("SET", "my_prefix/us-east-1", "ami_12345").Expect("ok")
 
   result, keep, err := p.PostProcess(testUi(), artifact)
-  if result != nil {
-    t.Fatal("should not return an artifact")
+  if result != artifact {
+    t.Fatal("should not return given artifact")
   }
   if keep {
     t.Fatal("should not keep")
@@ -87,8 +87,8 @@ func TestPostProcessor_PostProcess_amazonebs(t *testing.T) {
   redigomock.Command("SET", "my_prefix/us-east-1", "ami_12345").Expect("ok")
 
   result, keep, err := p.PostProcess(testUi(), artifact)
-  if result != nil {
-    t.Fatal("should not return an artifact")
+  if result != artifact {
+    t.Fatal("should not return given artifact")
   }
   if keep {
     t.Fatal("should not keep")
@@ -111,8 +111,8 @@ func TestPostProcessor_PostProcess_amazoninstance(t *testing.T) {
   redigomock.Command("SET", "my_prefix/us-east-1", "ami_12345").Expect("ok")
 
   result, keep, err := p.PostProcess(testUi(), artifact)
-  if result != nil {
-    t.Fatal("should not return an artifact")
+  if result != artifact {
+    t.Fatal("should not return given artifact")
   }
   if keep {
     t.Fatal("should not keep")
@@ -136,8 +136,8 @@ func TestPostProcessor_PostProcess_amazoninstanceMultiRegion(t *testing.T) {
   redigomock.Command("SET", "my_prefix/us-west-1", "ami_12345").Expect("ok")
 
   result, keep, err := p.PostProcess(testUi(), artifact)
-  if result != nil {
-    t.Fatal("should not return an artifact")
+  if result != artifact {
+    t.Fatal("should not return given artifact")
   }
   if keep {
     t.Fatal("should not keep")
@@ -160,8 +160,8 @@ func TestPostProcessor_PostProcess_googlecompute(t *testing.T) {
   redigomock.Command("SET", "my_prefix", "image-name-12345").Expect("ok")
 
   result, keep, err := p.PostProcess(testUi(), artifact)
-  if result != nil {
-    t.Fatal("should not return an artifact")
+  if result != artifact {
+    t.Fatal("should not return given artifact")
   }
   if keep {
     t.Fatal("should not keep")
