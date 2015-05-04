@@ -13,7 +13,7 @@ endif
 all: 
 	@$(ECHO) "$(OK_COLOR)==> Building$(NO_COLOR)"
 	go get -v ./...
-	go test -v
+	go test -v ./...
 	go build
 
 bin: 
@@ -23,7 +23,7 @@ bin:
 test: 
 	@$(ECHO) "$(OK_COLOR)==> Testing$(NO_COLOR)"
 	go get -v ./...
-	go test -v
+	go test -v ./...
 
 clean:
 	@rm -rf dist/ packer-post-processor-redis
