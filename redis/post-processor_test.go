@@ -52,8 +52,8 @@ func TestPostProcessor_PostProcess(t *testing.T) {
   if result != artifact {
     t.Fatal("should not return given artifact")
   }
-  if keep {
-    t.Fatal("should not keep")
+  if keep == false {
+    t.Fatal("should keep")
   }
   if err != nil {
     t.Fatalf("err: %s", err)
@@ -90,8 +90,8 @@ func TestPostProcessor_PostProcess_amazonebs(t *testing.T) {
   if result != artifact {
     t.Fatal("should not return given artifact")
   }
-  if keep {
-    t.Fatal("should not keep")
+  if keep == false {
+    t.Fatal("should keep")
   }
   if err != nil {
     t.Fatalf("err: %s", err)
@@ -114,8 +114,8 @@ func TestPostProcessor_PostProcess_amazoninstance(t *testing.T) {
   if result != artifact {
     t.Fatal("should not return given artifact")
   }
-  if keep {
-    t.Fatal("should not keep")
+  if keep == false {
+    t.Fatal("should keep")
   }
   if err != nil {
     t.Fatalf("err: %s", err)
@@ -139,8 +139,8 @@ func TestPostProcessor_PostProcess_amazoninstanceMultiRegion(t *testing.T) {
   if result != artifact {
     t.Fatal("should not return given artifact")
   }
-  if keep {
-    t.Fatal("should not keep")
+  if keep == false {
+    t.Fatal("should keep")
   }
   if err != nil {
     t.Fatalf("err: %s", err)
@@ -163,8 +163,8 @@ func TestPostProcessor_PostProcess_googlecompute(t *testing.T) {
   if result != artifact {
     t.Fatal("should not return given artifact")
   }
-  if keep {
-    t.Fatal("should not keep")
+  if keep == false {
+    t.Fatal("should keep")
   }
   if err != nil {
     t.Fatalf("err: %s", err)
