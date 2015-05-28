@@ -2,14 +2,14 @@ package redis
 
 import (
 	"fmt"
+	"strings"
+	"net/url"
 
 	"github.com/garyburd/redigo/redis"
 	"github.com/mitchellh/packer/common"
+	"github.com/mitchellh/packer/helper/config"
 	"github.com/mitchellh/packer/packer"
-
-	"net/url"
-
-	"strings"
+	"github.com/mitchellh/packer/template/interpolate"
 )
 
 var builtins = map[string]string{
@@ -24,7 +24,7 @@ type Config struct {
 	RedisUrl  string `mapstructure:"redis_url"`
 	KeyPrefix string `mapstructure:"key_prefix"`
 
-	tpl *packer.ConfigTemplate
+	ctx interpolate.Context
 }
 
 type PostProcessor struct {
@@ -34,33 +34,14 @@ type PostProcessor struct {
 }
 
 func (p *PostProcessor) Configure(raws ...interface{}) error {
-	_, err := common.DecodeConfig(&p.config, raws...)
+	err := config.Decode(&p.config, &config.DecodeOpts{
+		Interpolate: true,
+		InterpolateFilter: &interpolate.RenderFilter{
+			Exclude: []string{},
+		},
+	}, raws...)
 	if err != nil {
 		return err
-	}
-
-	p.config.tpl, err = packer.NewConfigTemplate()
-	if err != nil {
-		return err
-	}
-	p.config.tpl.UserVars = p.config.PackerUserVars
-
-	// Accumulate any errors
-	errs := new(packer.MultiError)
-
-	// Process templates
-	templates := map[string]*string{
-		"redis_url":  &p.config.RedisUrl,
-		"key_prefix": &p.config.KeyPrefix,
-	}
-
-	for n, ptr := range templates {
-		var err error
-		*ptr, err = p.config.tpl.Process(*ptr, nil)
-		if err != nil {
-			errs = packer.MultiErrorAppend(
-				errs, fmt.Errorf("Error processing %s: %s", n, err))
-		}
 	}
 
 	required := map[string]*string{
@@ -68,6 +49,7 @@ func (p *PostProcessor) Configure(raws ...interface{}) error {
 		"key_prefix": &p.config.KeyPrefix,
 	}
 
+	var errs *packer.MultiError
 	for key, ptr := range required {
 		if *ptr == "" {
 			errs = packer.MultiErrorAppend(
@@ -75,7 +57,7 @@ func (p *PostProcessor) Configure(raws ...interface{}) error {
 		}
 	}
 
-	if len(errs.Errors) > 0 {
+	if errs != nil && len(errs.Errors) > 0 {
 		return errs
 	}
 
