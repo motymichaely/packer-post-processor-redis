@@ -16,6 +16,7 @@ var builtins = map[string]string{
 	"mitchellh.amazonebs":       "amazonebs",
 	"mitchellh.amazon.instance": "amazoninstance",
 	"packer.googlecompute":      "googlecompute",
+	"packer.docker":             "docker"
 }
 
 type Config struct {
@@ -23,6 +24,7 @@ type Config struct {
 
 	RedisUrl  string `mapstructure:"redis_url"`
 	KeyPrefix string `mapstructure:"key_prefix"`
+	ImageId   string `mapstructure:"image_id"`
 
 	ctx interpolate.Context
 }
@@ -129,11 +131,19 @@ func (p *PostProcessor) PostProcess(ui packer.Ui, artifact packer.Artifact) (pac
 
 		if len(parts) == 2 {
 			region := parts[0]
-			image_id = parts[1]
+			if len(p.config.ImageId) > 0 {
+				image_id = p.config.ImageId
+			} else { 
+				image_id = parts[1]
+			}
 
 			redis_key = fmt.Sprintf("%s/%s", p.config.KeyPrefix, region)
 		} else {
-			image_id = parts[0]
+			if len(p.config.ImageId) > 0 {
+				image_id = p.config.ImageId
+			} else { 
+				image_id = parts[0]
+			}
 
 			redis_key = fmt.Sprintf("%s", p.config.KeyPrefix)
 		}
