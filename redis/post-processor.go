@@ -13,8 +13,8 @@ import (
 )
 
 var builtins = map[string]string{
-	"hashicorp.amazonebs":       "amazonebs",
-	"hashicorp.amazon.instance": "amazoninstance",
+	"mitchellh.amazonebs":       "amazonebs",
+	"mitchellh.amazon.instance": "amazoninstance",
 	"packer.googlecompute":      "googlecompute",
 	"packer.docker":             "docker",
 }
