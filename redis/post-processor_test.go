@@ -3,9 +3,9 @@ package redis
 import (
 	"bytes"
 
-	"github.com/mitchellh/packer/builder/amazon/ebs"
-	"github.com/mitchellh/packer/builder/amazon/instance"
-	"github.com/mitchellh/packer/packer"
+	"github.com/hashicorp/packer/builder/amazon/ebs"
+	"github.com/hashicorp/packer/builder/amazon/instance"
+	"github.com/hashicorp/packer/packer"
 	"github.com/rafaeljusto/redigomock"
 
 	"testing"
