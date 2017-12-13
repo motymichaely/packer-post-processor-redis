@@ -13,10 +13,12 @@ import (
 )
 
 var builtins = map[string]string{
-	"mitchellh.amazonebs":       "amazonebs",
-	"mitchellh.amazon.instance": "amazoninstance",
-	"packer.googlecompute":      "googlecompute",
-	"packer.docker":             "docker",
+	"mitchellh.amazonebs":                 "amazonebs",
+	"mitchellh.amazon.instance":           "amazoninstance",
+	"packer.googlecompute":                "googlecompute",
+	"packer.docker":                       "docker",
+	"packer.post-processor.docker-import": "docker",
+	"packer.post-processor.docker-tag":    "docker",
 }
 
 type Config struct {
