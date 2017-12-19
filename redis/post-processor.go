@@ -131,15 +131,22 @@ func (p *PostProcessor) PostProcess(ui packer.Ui, artifact packer.Artifact) (pac
 		redis_key := ""
 		image_id := ""
 
+		
 		if len(parts) == 2 {
-			region := parts[0]
+			if artifact.BuilderId() == "packer.post-processor.docker-import" {
+				// packer.post-processor.docker-import image ID includes the SHA256 part. Ignore it.
+				redis_key = fmt.Sprintf("%s", p.config.KeyPrefix)
+			} else {
+				region := parts[0]
+				redis_key = fmt.Sprintf("%s/%s", p.config.KeyPrefix, region)
+			}
+			
 			if len(p.config.ImageId) > 0 {
 				image_id = p.config.ImageId
 			} else { 
 				image_id = parts[1]
 			}
-
-			redis_key = fmt.Sprintf("%s/%s", p.config.KeyPrefix, region)
+			
 		} else {
 			if len(p.config.ImageId) > 0 {
 				image_id = p.config.ImageId

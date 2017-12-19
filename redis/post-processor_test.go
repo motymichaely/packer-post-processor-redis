@@ -171,6 +171,54 @@ func TestPostProcessor_PostProcess_googlecompute(t *testing.T) {
 	}
 }
 
+func TestPostProcessor_PostProcess_docker(t *testing.T) {
+	p := &PostProcessor{client: redigomock.NewConn()}
+	if err := p.Configure(validDefaults()); err != nil {
+		t.Fatalf("err: %s", err)
+	}
+	artifact := &packer.MockArtifact{
+		BuilderIdValue: "packer.docker",
+		IdValue:        "sha256:image-name-12345",
+	}
+
+	redigomock.Command("SET", "my_prefix/sha256", "image-name-12345").Expect("ok")
+
+	result, keep, err := p.PostProcess(testUi(), artifact)
+	if result != artifact {
+		t.Fatal("should not return given artifact")
+	}
+	if keep == false {
+		t.Fatal("should keep")
+	}
+	if err != nil {
+		t.Fatalf("err: %s", err)
+	}
+}
+
+func TestPostProcessor_PostProcess_docker_import(t *testing.T) {
+	p := &PostProcessor{client: redigomock.NewConn()}
+	if err := p.Configure(validDefaults()); err != nil {
+		t.Fatalf("err: %s", err)
+	}
+	artifact := &packer.MockArtifact{
+		BuilderIdValue: "packer.post-processor.docker-import",
+		IdValue:        "sha256:image-name-12345",
+	}
+
+	redigomock.Command("SET", "my_prefix", "image-name-12345").Expect("ok")
+
+	result, keep, err := p.PostProcess(testUi(), artifact)
+	if result != artifact {
+		t.Fatal("should not return given artifact")
+	}
+	if keep == false {
+		t.Fatal("should keep")
+	}
+	if err != nil {
+		t.Fatalf("err: %s", err)
+	}
+}
+
 func validDefaults() map[string]interface{} {
 	return map[string]interface{}{
 		"redis_url":  ":6379",
