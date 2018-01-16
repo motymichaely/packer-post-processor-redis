@@ -19,6 +19,7 @@ var builtins = map[string]string{
 	"packer.docker":                       "docker",
 	"packer.post-processor.docker-import": "docker",
 	"packer.post-processor.docker-tag":    "docker",
+	"Azure.ResourceManagement.VMImage":    "azure-arm",
 }
 
 type Config struct {
