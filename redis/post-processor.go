@@ -1,6 +1,7 @@
 package redis
 
 import (
+	"context"
 	"fmt"
 	"strings"
 	"net/url"
@@ -41,6 +42,7 @@ type PostProcessor struct {
 func (p *PostProcessor) Configure(raws ...interface{}) error {
 	err := config.Decode(&p.config, &config.DecodeOpts{
 		Interpolate: true,
+		InterpolateContext: &p.config.ctx,
 		InterpolateFilter: &interpolate.RenderFilter{
 			Exclude: []string{},
 		},
@@ -69,10 +71,10 @@ func (p *PostProcessor) Configure(raws ...interface{}) error {
 	return nil
 }
 
-func (p *PostProcessor) PostProcess(ui packer.Ui, artifact packer.Artifact) (packer.Artifact, bool, error) {
+func (p *PostProcessor) PostProcess(ctx context.Context, ui packer.Ui, artifact packer.Artifact) (packer.Artifact, bool, bool, error) {
 	_, ok := builtins[artifact.BuilderId()]
 	if !ok {
-		return nil, true, fmt.Errorf(
+		return nil, true, false, fmt.Errorf(
 			"Unsupported artifact type: %s", artifact.BuilderId())
 	}
 
@@ -88,7 +90,7 @@ func (p *PostProcessor) PostProcess(ui packer.Ui, artifact packer.Artifact) (pac
 		redisURL, err := url.Parse(p.config.RedisUrl)
 
 		if err != nil {
-			return artifact, true, fmt.Errorf(
+			return artifact, true, false, fmt.Errorf(
 				"Error parsing RedisUrl: %s", err)
 		}
 
@@ -104,7 +106,7 @@ func (p *PostProcessor) PostProcess(ui packer.Ui, artifact packer.Artifact) (pac
 			"tcp",
 			redisURL.Host)
 		if err != nil {
-			return artifact, true, fmt.Errorf(
+			return artifact, true, false, fmt.Errorf(
 				"Error connecting to Redis: %s", err)
 		}
 
@@ -112,7 +114,7 @@ func (p *PostProcessor) PostProcess(ui packer.Ui, artifact packer.Artifact) (pac
 			_, err = p.client.Do("AUTH", auth)
 
 			if err != nil {
-				return artifact, true, fmt.Errorf(
+				return artifact, true, false, fmt.Errorf(
 					"Error connecting to Redis: %s", err)
 			}
 		}
@@ -161,8 +163,8 @@ func (p *PostProcessor) PostProcess(ui packer.Ui, artifact packer.Artifact) (pac
 		ui.Message(fmt.Sprintf("Setting key %s with value %s", redis_key, image_id))
 
 		if _, err := p.client.Do("SET", redis_key, image_id); err != nil {
-			return artifact, true, err
+			return artifact, true, false, err
 		}
 	}
-	return artifact, true, nil
+	return artifact, true, false, nil
 }

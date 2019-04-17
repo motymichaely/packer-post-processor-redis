@@ -2,6 +2,7 @@ package redis
 
 import (
 	"bytes"
+	"context"
 
 	"github.com/hashicorp/packer/builder/amazon/ebs"
 	"github.com/hashicorp/packer/builder/amazon/instance"
@@ -36,7 +37,8 @@ func TestPostProcessor_ImplementsPostProcessor(t *testing.T) {
 }
 
 func TestPostProcessor_PostProcess(t *testing.T) {
-	p := &PostProcessor{client: redigomock.NewConn()}
+	conn := redigomock.NewConn()
+	p := &PostProcessor{client: conn}
 	if err := p.Configure(validDefaults()); err != nil {
 		t.Fatalf("err: %s", err)
 	}
@@ -46,14 +48,17 @@ func TestPostProcessor_PostProcess(t *testing.T) {
 		IdValue:        "us-east-1:ami_12345",
 	}
 
-	redigomock.Command("SET", "my_prefix/us-east-1", "ami_12345").Expect("ok")
+	conn.Command("SET", "my_prefix/us-east-1", "ami_12345").Expect("ok")
 
-	result, keep, err := p.PostProcess(testUi(), artifact)
+	result, keep, forceOverride, err := p.PostProcess(context.Background(), testUi(), artifact)
 	if result != artifact {
 		t.Fatal("should not return given artifact")
 	}
 	if keep == false {
 		t.Fatal("should keep")
+	}
+	if forceOverride == true {
+		t.Fatal("should not force override")
 	}
 	if err != nil {
 		t.Fatalf("err: %s", err)
@@ -75,7 +80,8 @@ func TestPostProcessor_PostProcess_validDefaults(t *testing.T) {
 }
 
 func TestPostProcessor_PostProcess_amazonebs(t *testing.T) {
-	p := &PostProcessor{client: redigomock.NewConn()}
+	conn := redigomock.NewConn()
+	p := &PostProcessor{client: conn}
 	if err := p.Configure(validDefaults()); err != nil {
 		t.Fatalf("err: %s", err)
 	}
@@ -84,14 +90,17 @@ func TestPostProcessor_PostProcess_amazonebs(t *testing.T) {
 		IdValue:        "us-east-1:ami_12345",
 	}
 
-	redigomock.Command("SET", "my_prefix/us-east-1", "ami_12345").Expect("ok")
+	conn.Command("SET", "my_prefix/us-east-1", "ami_12345").Expect("ok")
 
-	result, keep, err := p.PostProcess(testUi(), artifact)
+	result, keep, forceOverride, err := p.PostProcess(context.Background(), testUi(), artifact)
 	if result != artifact {
 		t.Fatal("should not return given artifact")
 	}
 	if keep == false {
 		t.Fatal("should keep")
+	}
+	if forceOverride == true {
+		t.Fatal("should not force override")
 	}
 	if err != nil {
 		t.Fatalf("err: %s", err)
@@ -99,7 +108,8 @@ func TestPostProcessor_PostProcess_amazonebs(t *testing.T) {
 }
 
 func TestPostProcessor_PostProcess_amazoninstance(t *testing.T) {
-	p := &PostProcessor{client: redigomock.NewConn()}
+	conn := redigomock.NewConn()
+	p := &PostProcessor{client: conn}
 	if err := p.Configure(validDefaults()); err != nil {
 		t.Fatalf("err: %s", err)
 	}
@@ -108,14 +118,17 @@ func TestPostProcessor_PostProcess_amazoninstance(t *testing.T) {
 		IdValue:        "us-east-1:ami_12345",
 	}
 
-	redigomock.Command("SET", "my_prefix/us-east-1", "ami_12345").Expect("ok")
+	conn.Command("SET", "my_prefix/us-east-1", "ami_12345").Expect("ok")
 
-	result, keep, err := p.PostProcess(testUi(), artifact)
+	result, keep, forceOverride, err := p.PostProcess(context.Background(),testUi(), artifact)
 	if result != artifact {
 		t.Fatal("should not return given artifact")
 	}
 	if keep == false {
 		t.Fatal("should keep")
+	}
+	if forceOverride == true {
+		t.Fatal("should not force override")
 	}
 	if err != nil {
 		t.Fatalf("err: %s", err)
@@ -123,7 +136,8 @@ func TestPostProcessor_PostProcess_amazoninstance(t *testing.T) {
 }
 
 func TestPostProcessor_PostProcess_amazoninstanceMultiRegion(t *testing.T) {
-	p := &PostProcessor{client: redigomock.NewConn()}
+	conn := redigomock.NewConn()
+	p := &PostProcessor{client: conn}
 	if err := p.Configure(validDefaults()); err != nil {
 		t.Fatalf("err: %s", err)
 	}
@@ -132,15 +146,18 @@ func TestPostProcessor_PostProcess_amazoninstanceMultiRegion(t *testing.T) {
 		IdValue:        "us-east-1:ami_12345,us-west-1:ami_12345",
 	}
 
-	redigomock.Command("SET", "my_prefix/us-east-1", "ami_12345").Expect("ok")
-	redigomock.Command("SET", "my_prefix/us-west-1", "ami_12345").Expect("ok")
+	conn.Command("SET", "my_prefix/us-east-1", "ami_12345").Expect("ok")
+	conn.Command("SET", "my_prefix/us-west-1", "ami_12345").Expect("ok")
 
-	result, keep, err := p.PostProcess(testUi(), artifact)
+	result, keep, forceOverride, err := p.PostProcess(context.Background(), testUi(), artifact)
 	if result != artifact {
 		t.Fatal("should not return given artifact")
 	}
 	if keep == false {
 		t.Fatal("should keep")
+	}
+	if forceOverride == true {
+		t.Fatal("should not force override")
 	}
 	if err != nil {
 		t.Fatalf("err: %s", err)
@@ -148,7 +165,8 @@ func TestPostProcessor_PostProcess_amazoninstanceMultiRegion(t *testing.T) {
 }
 
 func TestPostProcessor_PostProcess_googlecompute(t *testing.T) {
-	p := &PostProcessor{client: redigomock.NewConn()}
+	conn := redigomock.NewConn()
+	p := &PostProcessor{client: conn}
 	if err := p.Configure(validDefaults()); err != nil {
 		t.Fatalf("err: %s", err)
 	}
@@ -157,14 +175,17 @@ func TestPostProcessor_PostProcess_googlecompute(t *testing.T) {
 		IdValue:        "image-name-12345",
 	}
 
-	redigomock.Command("SET", "my_prefix", "image-name-12345").Expect("ok")
+	conn.Command("SET", "my_prefix", "image-name-12345").Expect("ok")
 
-	result, keep, err := p.PostProcess(testUi(), artifact)
+	result, keep, forceOverride, err := p.PostProcess(context.Background(), testUi(), artifact)
 	if result != artifact {
 		t.Fatal("should not return given artifact")
 	}
 	if keep == false {
 		t.Fatal("should keep")
+	}
+	if forceOverride == true {
+		t.Fatal("should not force override")
 	}
 	if err != nil {
 		t.Fatalf("err: %s", err)
@@ -172,7 +193,8 @@ func TestPostProcessor_PostProcess_googlecompute(t *testing.T) {
 }
 
 func TestPostProcessor_PostProcess_docker(t *testing.T) {
-	p := &PostProcessor{client: redigomock.NewConn()}
+	conn := redigomock.NewConn()
+	p := &PostProcessor{client: conn}
 	if err := p.Configure(validDefaults()); err != nil {
 		t.Fatalf("err: %s", err)
 	}
@@ -181,14 +203,17 @@ func TestPostProcessor_PostProcess_docker(t *testing.T) {
 		IdValue:        "sha256:image-name-12345",
 	}
 
-	redigomock.Command("SET", "my_prefix/sha256", "image-name-12345").Expect("ok")
+	conn.Command("SET", "my_prefix/sha256", "image-name-12345").Expect("ok")
 
-	result, keep, err := p.PostProcess(testUi(), artifact)
+	result, keep, forceOverride, err := p.PostProcess(context.Background(), testUi(), artifact)
 	if result != artifact {
 		t.Fatal("should not return given artifact")
 	}
 	if keep == false {
 		t.Fatal("should keep")
+	}
+	if forceOverride == true {
+		t.Fatal("should not force override")
 	}
 	if err != nil {
 		t.Fatalf("err: %s", err)
@@ -196,7 +221,8 @@ func TestPostProcessor_PostProcess_docker(t *testing.T) {
 }
 
 func TestPostProcessor_PostProcess_docker_import(t *testing.T) {
-	p := &PostProcessor{client: redigomock.NewConn()}
+	conn := redigomock.NewConn()
+	p := &PostProcessor{client: conn}
 	if err := p.Configure(validDefaults()); err != nil {
 		t.Fatalf("err: %s", err)
 	}
@@ -205,14 +231,17 @@ func TestPostProcessor_PostProcess_docker_import(t *testing.T) {
 		IdValue:        "sha256:image-name-12345",
 	}
 
-	redigomock.Command("SET", "my_prefix", "image-name-12345").Expect("ok")
+	conn.Command("SET", "my_prefix", "image-name-12345").Expect("ok")
 
-	result, keep, err := p.PostProcess(testUi(), artifact)
+	result, keep, forceOverride, err := p.PostProcess(context.Background(), testUi(), artifact)
 	if result != artifact {
 		t.Fatal("should not return given artifact")
 	}
 	if keep == false {
 		t.Fatal("should keep")
+	}
+	if forceOverride == true {
+		t.Fatal("should not force override")
 	}
 	if err != nil {
 		t.Fatalf("err: %s", err)
